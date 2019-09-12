@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>InstaCoreGraphAPI</name>
+    </assembly>
+    <members>
+        <member name="M:InstaCoreGraphAPI.Controllers.InstaController.Get(System.String)">
+            <summary>
+            Get results from an url
+            </summary>
+            <param name="uri">an url of facebook graph api</param>
+            <returns>A json file </returns>
+        </member>
+        <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetMedias(System.Int32,System.String,System.String)">
+            <summary>
+            Get medias list from instagram graph api
+            </summary>
+            <param name="limit">number of medias to display</param>
+            <param name="cursorAfter">cursor for the next list of medias </param>
+            <param name="cursorBefore">cursor for the previous list of medias </param>
+            <returns>A json file </returns>
+        </member>
+    </members>
+</doc>
