@@ -12,11 +12,12 @@ namespace InstaCoreGraphAPI.Business.Interfaces
     {
         string GetGraphApiUrl(string uri);
 
-        List<SimpleMedia> GetMedia(int limit, string cursorBefore, string cursorAfter);
-
-        BusinessDiscovery GetBusinessDiscovery(string instagramId, string accountName);
+        List<SimpleMedia> GetMediasInsight(int limit, string cursorBefore, string cursorAfter);
 
         SimpleMedia GetMediaInsight(string id);
 
+        List<SimpleMedia> GetStoriesInsight();
+
+        BusinessDiscovery GetBusinessDiscovery(string instagramId, string accountName);
     }
 }

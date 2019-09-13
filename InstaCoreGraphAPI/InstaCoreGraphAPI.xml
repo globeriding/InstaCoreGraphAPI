@@ -11,13 +11,26 @@
             <param name="uri">an url of facebook graph api</param>
             <returns>A json file </returns>
         </member>
-        <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetMedias(System.Int32,System.String,System.String)">
+        <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetMediasInsight(System.Int32,System.String,System.String)">
             <summary>
-            Get medias list from instagram graph api
+            /// Get insight and properties for a list of medias
             </summary>
             <param name="limit">number of medias to display</param>
             <param name="cursorAfter">cursor for the next list of medias </param>
             <param name="cursorBefore">cursor for the previous list of medias </param>
+            <returns>A json file </returns>
+        </member>
+        <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetMediaInsight(System.String)">
+            <summary>
+            Get insight and properties for one specific media
+            </summary>
+            <param name="mediaId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetStoriesInsight">
+            <summary>
+            Get stories list from instagram graph api
+            </summary>
             <returns>A json file </returns>
         </member>
         <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetBusinessDiscovery(System.String)">

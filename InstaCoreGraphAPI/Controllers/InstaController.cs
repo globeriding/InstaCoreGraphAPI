@@ -51,23 +51,28 @@ namespace InstaCoreGraphAPI.Controllers
         }
 
         /// <summary>
-        /// Get medias list from instagram graph api
+        /// /// Get insight and properties for a list of medias
         /// </summary>
         /// <param name="limit">number of medias to display</param>
         /// <param name="cursorAfter">cursor for the next list of medias </param>
         /// <param name="cursorBefore">cursor for the previous list of medias </param>
         /// <returns>A json file </returns>
-        [HttpGet("GetMedias")]
+        [HttpGet("GetMediasInsight")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Success.")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server error.")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad request", typeof(string))]
-        public IActionResult GetMedias(int limit = 25, string cursorBefore = null, string cursorAfter = null)
+        public IActionResult GetMediasInsight(int limit = 25, string cursorBefore = null, string cursorAfter = null)
         {
-            List<SimpleMedia> objectResult = _instaBusiness.GetMedia(limit, cursorBefore, cursorAfter);
+            List<SimpleMedia> objectResult = _instaBusiness.GetMediasInsight(limit, cursorBefore, cursorAfter);
             return Ok(objectResult);
         }
 
 
+        /// <summary>
+        /// Get insight and properties for one specific media
+        /// </summary>
+        /// <param name="mediaId"></param>
+        /// <returns></returns>
         [HttpGet("GetMediaInsight")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Success.")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server error.")]
@@ -77,6 +82,22 @@ namespace InstaCoreGraphAPI.Controllers
             SimpleMedia objectResult = _instaBusiness.GetMediaInsight(mediaId);
             return Ok(objectResult);
         }
+
+
+        /// <summary>
+        /// Get stories list from instagram graph api
+        /// </summary>
+        /// <returns>A json file </returns>
+        [HttpGet("GetStoriesInsight")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Success.")]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server error.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad request", typeof(string))]
+        public IActionResult GetStoriesInsight()
+        {
+            List<SimpleMedia> objectResult = _instaBusiness.GetStoriesInsight();
+            return Ok(objectResult);
+        }
+
 
         /// <summary>
         /// Get Business Discovery

@@ -73,10 +73,18 @@ namespace InstaCoreGraphAPI.Business
             return JsonConvert.DeserializeObject<Media>(jsonResult);
         }
 
-        public List<SimpleMedia> GetMedia(int limit = 25, string cursorBefore = null, string cursorAfter = null)
+        public List<SimpleMedia> GetMediasInsight(int limit = 25, string cursorBefore = null, string cursorAfter = null)
         {
             // invoke the private method - DoMediaSearch()
             Media instagramResults = DoMediaSearch(limit, cursorBefore, cursorAfter);
+
+            var mediaModels = ExtractSimpleMedia(instagramResults);
+
+            return mediaModels;
+        }
+
+        private List<SimpleMedia> ExtractSimpleMedia(Media instagramResults)
+        {
             List<SimpleMedia> mediaModels = new List<SimpleMedia>();
 
             //map from the JSON/DTO returned by DoMediaSearch() to the Domain Entities
@@ -92,7 +100,7 @@ namespace InstaCoreGraphAPI.Business
                         like_count = mediaData.like_count,
                         comments_count = mediaData.comments_count,
                         impression_count = insight.data.Find(i => i.name == "impressions").values[0].value,
-                        engagement_count = insight.data.Find(i => i.name == "engagement").values[0].value,
+                        engagement_count = insight.data.Find(i => i.name == "engagement") == null ? 0 : insight.data.Find(i => i.name == "engagement").values[0].value,
                         reach_count = insight.data.Find(i => i.name == "reach").values[0].value,
                         media_url = mediaData.media_url,
                         permalink = mediaData.permalink,
@@ -137,9 +145,24 @@ namespace InstaCoreGraphAPI.Business
                 };
         }
 
+        public List<SimpleMedia> GetStoriesInsight()
+        {
+            //url for one media
+            string mediaUrl = $"{_fbGraphApiBaseUrl}/{_instagramId}/stories?access_token={_accessToken}";
+            //invoke the request
+            string jsonResult = this.GetGraphApiUrl(mediaUrl);
+            // convert to json annotated object
+            Media stories = JsonConvert.DeserializeObject<Media>(jsonResult);
+
+            var mediaDatas = ExtractSimpleMedia(stories);
+
+            return mediaDatas;
+        }
+
+        #region Private Methods
         private InstagramInsight GetMediaImpressionsInsight(string mediaDataId)
         {
-            string impressionsUrl = $"{_fbGraphApiBaseUrl}/{mediaDataId}/insights/?metric=impressions%2Cengagement%2Creach&access_token={_accessToken}";
+            string impressionsUrl = $"{_fbGraphApiBaseUrl}/{mediaDataId}/insights/?metric=impressions%2Creach&access_token={_accessToken}";
 
             InstagramInsight instagramInsight;
 
@@ -168,7 +191,6 @@ namespace InstaCoreGraphAPI.Business
             string commentsUrl = $"{_fbGraphApiBaseUrl}/{mediaDataId}/comments?access_token={_accessToken}";
             return JsonConvert.DeserializeObject<Comments>(GetGraphApiUrl(commentsUrl));
         }
-
-       
+        #endregion
     }
 }
