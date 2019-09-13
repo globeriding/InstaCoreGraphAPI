@@ -14,13 +14,9 @@ namespace InstaCoreGraphAPI.Business.Interfaces
 
         List<SimpleMedia> GetMedia(int limit, string cursorBefore, string cursorAfter);
 
-        InstagramInsight GetMediaImpressionsInsight(string mediaDataId);
-
-        List<Comment> GetMediaCommentsEntities(string mediaDataId);
-
-        Comments GetMediaCommentsDto(string mediaDataId);
-
         BusinessDiscovery GetBusinessDiscovery(string instagramId, string accountName);
+
+        SimpleMedia GetMediaInsight(string id);
 
     }
 }

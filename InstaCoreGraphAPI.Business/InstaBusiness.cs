@@ -104,7 +104,40 @@ namespace InstaCoreGraphAPI.Business
             return mediaModels;
         }
 
-        public InstagramInsight GetMediaImpressionsInsight(string mediaDataId)
+        public BusinessDiscovery GetBusinessDiscovery(string instagramId, string accountName)
+        {
+            string businessUrl = $"{_fbGraphApiBaseUrl}/{instagramId}?fields=business_discovery.username({accountName})%7Bfollowers_count%2Cmedia_count%7D&access_token={_accessToken}";
+            return JsonConvert.DeserializeObject<BusinessDiscovery>(GetGraphApiUrl(businessUrl));
+        }
+
+        public SimpleMedia GetMediaInsight(string id)
+        {
+            //url for one media
+            string mediaUrl = $"{_fbGraphApiBaseUrl}/{id}?access_token={_accessToken}&fields=media_url%2Cmedia_type%2Ccomments_count%2Clike_count%2Ctimestamp%2Cpermalink%2Ccaption";
+            //invoke the request
+            string jsonResult = this.GetGraphApiUrl(mediaUrl);
+            // convert to json annotated object
+            MediaData mediaData = JsonConvert.DeserializeObject<MediaData>(jsonResult);
+
+            InstagramInsight insight = GetMediaImpressionsInsight(mediaData.id);
+
+            return 
+                new SimpleMedia
+                {
+                    id = mediaData.id,
+                    like_count = mediaData.like_count,
+                    comments_count = mediaData.comments_count,
+                    impression_count = insight.data.Find(i => i.name == "impressions").values[0].value,
+                    engagement_count = insight.data.Find(i => i.name == "engagement").values[0].value,
+                    reach_count = insight.data.Find(i => i.name == "reach").values[0].value,
+                    media_url = mediaData.media_url,
+                    permalink = mediaData.permalink,
+                    //Comments = GetMediaCommentsEntities(mediaData.id),
+                    timestamp = mediaData.timestamp
+                };
+        }
+
+        private InstagramInsight GetMediaImpressionsInsight(string mediaDataId)
         {
             string impressionsUrl = $"{_fbGraphApiBaseUrl}/{mediaDataId}/insights/?metric=impressions%2Cengagement%2Creach&access_token={_accessToken}";
 
@@ -117,7 +150,7 @@ namespace InstaCoreGraphAPI.Business
             return instagramInsight;
         }
 
-        public List<Comment> GetMediaCommentsEntities(string mediaDataId)
+        private List<Comment> GetMediaCommentsEntities(string mediaDataId)
         {
             Comments commentsDtOs = GetMediaCommentsDto(mediaDataId);
             List<Comment> comments = new List<Comment>();
@@ -130,16 +163,12 @@ namespace InstaCoreGraphAPI.Business
             return comments;
         }
 
-        public Comments GetMediaCommentsDto(string mediaDataId)
+        private Comments GetMediaCommentsDto(string mediaDataId)
         {
             string commentsUrl = $"{_fbGraphApiBaseUrl}/{mediaDataId}/comments?access_token={_accessToken}";
             return JsonConvert.DeserializeObject<Comments>(GetGraphApiUrl(commentsUrl));
         }
 
-        public BusinessDiscovery GetBusinessDiscovery(string instagramId, string accountName)
-        {
-            string businessUrl = $"{_fbGraphApiBaseUrl}/{instagramId}?fields=business_discovery.username({accountName})%7Bfollowers_count%2Cmedia_count%7D&access_token={_accessToken}";
-            return JsonConvert.DeserializeObject<BusinessDiscovery>(GetGraphApiUrl(businessUrl));
-        }
+       
     }
 }

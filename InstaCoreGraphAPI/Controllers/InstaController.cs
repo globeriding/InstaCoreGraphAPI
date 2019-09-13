@@ -68,6 +68,16 @@ namespace InstaCoreGraphAPI.Controllers
         }
 
 
+        [HttpGet("GetMediaInsight")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Success.")]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server error.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad request", typeof(string))]
+        public IActionResult GetMediaInsight(string mediaId)
+        {
+            SimpleMedia objectResult = _instaBusiness.GetMediaInsight(mediaId);
+            return Ok(objectResult);
+        }
+
         /// <summary>
         /// Get Business Discovery
         /// </summary>
