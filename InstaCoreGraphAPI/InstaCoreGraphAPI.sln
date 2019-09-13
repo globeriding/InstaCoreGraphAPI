@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstaCoreGraphAPI.UnitTests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstaCoreGraphAPI.IntegrationTests", "..\InstaCoreGraphAPI.IntegrationTests\InstaCoreGraphAPI.IntegrationTests.csproj", "{F5470772-F873-4570-A3CA-6E95B3B8FD32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaCoreGraphAPI.Graph.Entity", "..\InstaCoreGraphAPI.Models\InstaCoreGraphAPI.Graph.Entity.csproj", "{425C0CEF-0297-424B-9156-FE085C5EB780}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstaCoreGraphAPI.Graph.Entity", "..\InstaCoreGraphAPI.Models\InstaCoreGraphAPI.Graph.Entity.csproj", "{425C0CEF-0297-424B-9156-FE085C5EB780}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InstaCoreGraphAPI.Business", "..\InstaCoreGraphAPI.Business\InstaCoreGraphAPI.Business.csproj", "{D7F55130-5E1E-4932-BD14-018E3CE41773}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{425C0CEF-0297-424B-9156-FE085C5EB780}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{425C0CEF-0297-424B-9156-FE085C5EB780}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{425C0CEF-0297-424B-9156-FE085C5EB780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7F55130-5E1E-4932-BD14-018E3CE41773}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7F55130-5E1E-4932-BD14-018E3CE41773}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7F55130-5E1E-4932-BD14-018E3CE41773}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7F55130-5E1E-4932-BD14-018E3CE41773}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

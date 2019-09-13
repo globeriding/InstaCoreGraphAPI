@@ -34,6 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InstaCoreGraphAPI.Business\InstaCoreGraphAPI.Business.csproj" />
     <ProjectReference Include="..\InstaCoreGraphAPI.Models\InstaCoreGraphAPI.Graph.Entity.csproj" />
   </ItemGroup>
 

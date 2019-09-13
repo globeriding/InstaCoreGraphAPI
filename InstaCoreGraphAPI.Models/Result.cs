@@ -79,7 +79,6 @@ namespace InstaCoreGraphAPI.Graph.Entity
         public DateTime timestamp { get; set; }
 
         public int MediaDataId { get; set; }
-        public DateTime DateCreated { get; set; }
     }
 
     public class Media

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using InstaCoreGraphAPI.Business;
+using InstaCoreGraphAPI.Business.Interfaces;
 using InstaCoreGraphAPI.Controllers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +31,7 @@ namespace InstaCoreGraphAPI
 
             // Set up dependency injection for controller's logger
             services.AddScoped<ILogger, Logger<InstaController>>();
+            services.AddScoped<IInstaBusiness, InstaBusiness>();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(options =>
