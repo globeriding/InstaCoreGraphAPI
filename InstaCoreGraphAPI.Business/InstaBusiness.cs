@@ -16,6 +16,7 @@ namespace InstaCoreGraphAPI.Business
         protected static IConfiguration Configuration;
         private readonly string _fbGraphApiBaseUrl;
         private readonly string _instagramId;
+        private IInstaBusiness _instaBusinessImplementation;
 
         public InstaBusiness(IConfiguration configuration)
         {
@@ -132,14 +133,13 @@ namespace InstaCoreGraphAPI.Business
         public Comments GetMediaCommentsDto(string mediaDataId)
         {
             string commentsUrl = $"{_fbGraphApiBaseUrl}/{mediaDataId}/comments?access_token={_accessToken}";
+            return JsonConvert.DeserializeObject<Comments>(GetGraphApiUrl(commentsUrl));
+        }
 
-            Comments comments = new Comments();
-
-            string jsonResult = GetGraphApiUrl(commentsUrl);
-
-            comments = JsonConvert.DeserializeObject<Comments>(jsonResult);
-
-            return comments;
+        public BusinessDiscovery GetBusinessDiscovery(string instagramId, string accountName)
+        {
+            string businessUrl = $"{_fbGraphApiBaseUrl}/{instagramId}?fields=business_discovery.username({accountName})%7Bfollowers_count%2Cmedia_count%7D&access_token={_accessToken}";
+            return JsonConvert.DeserializeObject<BusinessDiscovery>(GetGraphApiUrl(businessUrl));
         }
     }
 }

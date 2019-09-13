@@ -19,6 +19,8 @@ namespace InstaCoreGraphAPI.Business.Interfaces
         List<Comment> GetMediaCommentsEntities(string mediaDataId);
 
         Comments GetMediaCommentsDto(string mediaDataId);
-        
+
+        BusinessDiscovery GetBusinessDiscovery(string instagramId, string accountName);
+
     }
 }

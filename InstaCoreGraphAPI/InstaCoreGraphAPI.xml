@@ -20,5 +20,12 @@
             <param name="cursorBefore">cursor for the previous list of medias </param>
             <returns>A json file </returns>
         </member>
+        <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetBusinessDiscovery(System.String)">
+            <summary>
+            Get Business Discovery
+            </summary>
+            <param name="accountName">Instagram account name</param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

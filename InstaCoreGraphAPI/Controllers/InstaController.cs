@@ -67,6 +67,20 @@ namespace InstaCoreGraphAPI.Controllers
             return Ok(objectResult);
         }
 
-       
+
+        /// <summary>
+        /// Get Business Discovery
+        /// </summary>
+        /// <param name="accountName">Instagram account name</param>
+        /// <returns></returns>
+        [HttpGet("GetBusinessDiscovery")]
+        [SwaggerResponse((int) HttpStatusCode.OK, "Success.")]
+        [SwaggerResponse((int) HttpStatusCode.InternalServerError, "Internal Server error.")]
+        [SwaggerResponse((int) HttpStatusCode.BadRequest, "Bad request", typeof(string))]
+        public IActionResult GetBusinessDiscovery(string accountName)
+        {
+            BusinessDiscovery business = _instaBusiness.GetBusinessDiscovery(_instagramId, accountName);
+            return Ok(business);
+        }
     }
 }

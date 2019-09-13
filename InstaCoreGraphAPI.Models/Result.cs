@@ -105,4 +105,19 @@ namespace InstaCoreGraphAPI.Graph.Entity
         public string id { get; set; }
     }
 
+
+    public class BusinessDiscovery
+    {
+        [JsonProperty("business_discovery")]
+        public BusinessDiscoveryData media { get; set; }
+    }
+
+    public class BusinessDiscoveryData
+    {
+        [JsonProperty("followers_count")]
+        public int followersCount { get; set; }
+
+        [JsonProperty("media_count")]
+        public int mediaCount { get; set; }
+    }
 }
