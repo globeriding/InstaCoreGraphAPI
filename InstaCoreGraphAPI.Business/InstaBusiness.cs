@@ -16,7 +16,6 @@ namespace InstaCoreGraphAPI.Business
         protected static IConfiguration Configuration;
         private readonly string _fbGraphApiBaseUrl;
         private readonly string _instagramId;
-        private IInstaBusiness _instaBusinessImplementation;
 
         public InstaBusiness(IConfiguration configuration)
         {
@@ -25,7 +24,6 @@ namespace InstaCoreGraphAPI.Business
             _fbGraphApiBaseUrl = Configuration["AppSettings:fbGraphApiBaseUrl"];
             _instagramId = Configuration["AppSettings:InstagramId"];
         }
-
 
         /// <summary>
         /// Launch Get request
