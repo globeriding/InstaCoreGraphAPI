@@ -1,108 +1,102 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Reflection;
-using System.Text;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Reflection;
 
 namespace InstaCoreGraphAPI.IntegrationTests
 {
     public class TestFixture<TStartup> : IDisposable
     {
-    //    public static string GetProjectPath(string projectRelativePath, Assembly startupAssembly)
-    //    {
-    //        var projectName = startupAssembly.GetName().Name;
+        public static string GetProjectPath(string projectRelativePath, Assembly startupAssembly)
+        {
+            var projectName = startupAssembly.GetName().Name;
+            var applicationBasePath = AppContext.BaseDirectory;
+            var directoryInfo = new DirectoryInfo(applicationBasePath);
 
-    //        var applicationBasePath = AppContext.BaseDirectory;
+            do
+            {
+                directoryInfo = directoryInfo.Parent;
+                if (directoryInfo != null)
+                {
+                    var projectDirectoryInfo = new DirectoryInfo(Path.Combine(directoryInfo.FullName, projectRelativePath));
 
-    //        var directoryInfo = new DirectoryInfo(applicationBasePath);
+                    if (projectDirectoryInfo.Exists)
+                        if (new FileInfo(Path.Combine(projectDirectoryInfo.FullName, projectName, $"{projectName}.csproj")).Exists)
+                            return Path.Combine(projectDirectoryInfo.FullName, projectName);
+                }
+            }
+            while (directoryInfo?.Parent != null);
 
-    //        do
-    //        {
-    //            directoryInfo = directoryInfo.Parent;
+            throw new Exception($"Project root could not be located using the application root {applicationBasePath}.");
+        }
+        private readonly TestServer _server;
 
-    //            var projectDirectoryInfo = new DirectoryInfo(Path.Combine(directoryInfo.FullName, projectRelativePath));
+        public TestFixture()
+            : this(Path.Combine(""))
+        {
+        }
 
-    //            if (projectDirectoryInfo.Exists)
-    //                if (new FileInfo(Path.Combine(projectDirectoryInfo.FullName, projectName, $"{projectName}.csproj")).Exists)
-    //                    return Path.Combine(projectDirectoryInfo.FullName, projectName);
-    //        }
-    //        while (directoryInfo.Parent != null);
+        public HttpClient Client { get; }
 
-    //        throw new Exception($"Project root could not be located using the application root {applicationBasePath}.");
-    //    }
+        public void Dispose()
+        {
+            Client.Dispose();
+            _server.Dispose();
+        }
 
-    //    private TestServer Server;
+        protected virtual void InitializeServices(IServiceCollection services)
+        {
+            var startupAssembly = typeof(TStartup).GetTypeInfo().Assembly;
 
-    //    public TestFixture()
-    //        : this(Path.Combine(""))
-    //    {
-    //    }
+            var manager = new ApplicationPartManager
+            {
+                ApplicationParts =
+                {
+                    new AssemblyPart(startupAssembly)
+                },
+                FeatureProviders =
+                {
+                    new ControllerFeatureProvider(),
+                    new ViewComponentFeatureProvider()
+                }
+            };
 
-    //    public HttpClient Client { get; }
+            services.AddSingleton(manager);
+        }
 
-    //    public void Dispose()
-    //    {
-    //        Client.Dispose();
-    //        Server.Dispose();
-    //    }
+        protected TestFixture(string relativeTargetProjectParentDir)
+        {
+            var startupAssembly = typeof(TStartup).GetTypeInfo().Assembly;
+            var contentRoot = GetProjectPath(relativeTargetProjectParentDir, startupAssembly);
 
-    //    protected virtual void InitializeServices(IServiceCollection services)
-    //    {
-    //        var startupAssembly = typeof(TStartup).GetTypeInfo().Assembly;
+            var configurationBuilder = new ConfigurationBuilder()
+                .SetBasePath(contentRoot)
+                .AddJsonFile("appsettings.json")
+                .AddUserSecrets(startupAssembly);
 
-    //        var manager = new ApplicationPartManager
-    //        {
-    //            ApplicationParts =
-    //            {
-    //                new AssemblyPart(startupAssembly)
-    //            },
-    //            FeatureProviders =
-    //            {
-    //                new ControllerFeatureProvider(),
-    //                new ViewComponentFeatureProvider()
-    //            }
-    //        };
+            var webHostBuilder = new WebHostBuilder()
+                .UseContentRoot(contentRoot)
+                .ConfigureServices(InitializeServices)
+                .UseConfiguration(configurationBuilder.Build())
+                .UseEnvironment("Development")
+                .UseStartup(typeof(TStartup));
 
-    //        services.AddSingleton(manager);
-    //    }
+            // Create instance of test server
+            _server = new TestServer(webHostBuilder);
 
-    //    protected TestFixture(string relativeTargetProjectParentDir)
-    //    {
-    //        var startupAssembly = typeof(TStartup).GetTypeInfo().Assembly;
-    //        var contentRoot = GetProjectPath(relativeTargetProjectParentDir, startupAssembly);
-
-    //        var configurationBuilder = new ConfigurationBuilder()
-    //            .SetBasePath(contentRoot)
-    //            .AddJsonFile("appsettings.json");
-
-    //        var webHostBuilder = new WebHostBuilder()
-    //            .UseContentRoot(contentRoot)
-    //            .ConfigureServices(InitializeServices)
-    //            .UseConfiguration(configurationBuilder.Build())
-    //            .UseEnvironment("Development")
-    //            .UseStartup(typeof(TStartup));
-
-    //        // Create instance of test server
-    //        Server = new TestServer(webHostBuilder);
-
-    //        // Add configuration for client
-    //        Client = Server.CreateClient();
-    //        Client.BaseAddress = new Uri("http://localhost:5001");
-    //        Client.DefaultRequestHeaders.Accept.Clear();
-    //        Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-    //    }
-    public void Dispose()
-    {
-        throw new NotImplementedException();
-    }
+            // Add configuration for client
+            Client = _server.CreateClient();
+            Client.BaseAddress = new Uri("http://localhost:5001");
+            Client.DefaultRequestHeaders.Accept.Clear();
+            Client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        }
     }
 }

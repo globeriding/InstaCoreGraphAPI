@@ -21,8 +21,9 @@ namespace InstaCoreGraphAPI.Controllers
         private readonly string _instagramId;
         private string _access_token;
         private readonly string _fbGraphApiBaseUrl;
-        
-        public InstaController(ILogger<InstaController> logger, IConfiguration configuration, IInstaBusiness instabusiness)
+
+        public InstaController(ILogger<InstaController> logger, IConfiguration configuration,
+            IInstaBusiness instabusiness)
         {
             _logger = logger;
             _instaBusiness = instabusiness;
@@ -30,24 +31,6 @@ namespace InstaCoreGraphAPI.Controllers
             _instagramId = _configuration["AppSettings:InstagramId"];
             _access_token = _configuration["AppSettings:AccessToken"];
             _fbGraphApiBaseUrl = _configuration["AppSettings:fbGraphApiBaseUrl"];
-    }
-
-        /// <summary>
-        /// Get results from an url
-        /// </summary>
-        /// <param name="uri">an url of facebook graph api</param>
-        /// <returns>A json file </returns>
-        [HttpGet("Get")]
-        [SwaggerResponse((int)HttpStatusCode.OK, "Success.")]
-        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server error.")]
-        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad request", typeof(string))]
-        public IActionResult Get(string uri)
-        {
-            var returnStr = string.Empty;
-            if (!string.IsNullOrEmpty(uri))
-                returnStr= _instaBusiness.GetGraphApiUrl(uri);
-
-            return Ok(returnStr);
         }
 
         /// <summary>
@@ -83,6 +66,20 @@ namespace InstaCoreGraphAPI.Controllers
             return Ok(objectResult);
         }
 
+        /// <summary>
+        /// Get insight and properties for one specific story
+        /// </summary>
+        /// <param name="mediaId"></param>
+        /// <returns></returns>
+        [HttpGet("GetStoryInsight")]
+        [SwaggerResponse((int)HttpStatusCode.OK, "Success.")]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server error.")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad request", typeof(string))]
+        public IActionResult GetStoryInsight(string mediaId)
+        {
+            SimpleMedia objectResult = _instaBusiness.GetStoryInsight(mediaId);
+            return Ok(objectResult);
+        }
 
         /// <summary>
         /// Get stories list from instagram graph api

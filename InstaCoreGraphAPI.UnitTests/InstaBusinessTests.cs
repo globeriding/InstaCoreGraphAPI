@@ -2,6 +2,9 @@ using InstaCoreGraphAPI.Business;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using System;
+using System.Collections.Generic;
+using InstaCoreGraphAPI.Graph.Entity;
+using KellermanSoftware.CompareNetObjects;
 using Xunit;
 
 namespace InstaCoreGraphAPI.UnitTests
@@ -16,6 +19,9 @@ namespace InstaCoreGraphAPI.UnitTests
 
         private readonly string _accessToken;
         private readonly string _instagramId;
+        private readonly string _accountName;
+
+        private readonly CompareLogic _logic;
 
         public InstaBusinessTests()
         {
@@ -27,6 +33,7 @@ namespace InstaCoreGraphAPI.UnitTests
 
             _accessToken = SecretConfiguration["AppSettings:AccessToken"];
             _instagramId = SecretConfiguration["AppSettings:InstagramId"];
+            _accountName = SecretConfiguration["AppSettings:AccountName"];
 
             this._mockRepository = new MockRepository(MockBehavior.Strict);
 
@@ -34,6 +41,9 @@ namespace InstaCoreGraphAPI.UnitTests
             _mockConfiguration.Setup(c => c["AppSettings:AccessToken"]).Returns(() => _accessToken);
             _mockConfiguration.Setup(c => c["AppSettings:InstagramId"]).Returns(() => _instagramId );
             _mockConfiguration.Setup(c => c["AppSettings:fbGraphApiBaseUrl"]).Returns(() => "https://graph.facebook.com/v4.0");
+
+            ComparisonConfig config = new ComparisonConfig { MaxDifferences = int.MaxValue };
+            _logic = new CompareLogic(config);
         }
 
         public void Dispose()
@@ -66,7 +76,7 @@ namespace InstaCoreGraphAPI.UnitTests
         {
             // Arrange
             var instaBusiness = this.CreateInstaBusiness();
-            int limit = 0;
+            int limit = 2;
             string cursorBefore = null;
             string cursorAfter = null;
 
@@ -77,7 +87,7 @@ namespace InstaCoreGraphAPI.UnitTests
                 cursorAfter);
 
             // Assert
-            Assert.True(false);
+            Assert.True(result.Count ==  2);
         }
 
         [Fact]
@@ -85,16 +95,32 @@ namespace InstaCoreGraphAPI.UnitTests
         {
             // Arrange
             var instaBusiness = this.CreateInstaBusiness();
-            string instagramId = null;
-            string accountName = null;
 
             // Act
             var result = instaBusiness.GetBusinessDiscovery(
-                instagramId,
-                accountName);
+                _instagramId, _accountName);
 
             // Assert
-            Assert.True(false);
+            Assert.True(result.media.followersCount > 0);
+        }
+
+        [Fact]
+        public void GetBusinessDiscovery_LogicTest()
+        {
+            // Arrange
+            var instaBusiness = this.CreateInstaBusiness();
+            BusinessDiscovery expected = new BusinessDiscovery();
+            expected.media = new BusinessDiscoveryData();
+            expected.media.followersCount = 1357;
+            expected.media.mediaCount = 88;
+
+            // Act
+            var actual = instaBusiness.GetBusinessDiscovery(
+                _instagramId, _accountName);
+
+            // Assert
+            ComparisonResult comparisonResult = _logic.Compare(actual, expected);
+            Assert.True(comparisonResult.AreEqual, comparisonResult.DifferencesString);
         }
 
         [Fact]
@@ -102,19 +128,34 @@ namespace InstaCoreGraphAPI.UnitTests
         {
             // Arrange
             var instaBusiness = this.CreateInstaBusiness();
-            string id = null;
+            string id = "18025098451232996";
 
             // Act
             var result = instaBusiness.GetMediaInsight(
                 id);
 
             // Assert
-            Assert.True(false);
+            Assert.True(result.id == id);
+        }
+
+        [Fact]
+        public void GetStoryInsighTest()
+        {
+            // Arrange
+            var instaBusiness = this.CreateInstaBusiness();
+            string id = "18084620248110066";
+
+            // Act
+            var result = instaBusiness.GetStoryInsight(
+                id);
+
+            // Assert
+            Assert.True(result.id == id);
         }
 
         [Fact]
         public void GetStoriesInsightTest()
-        {
+        { 
             // Arrange
             var instaBusiness = this.CreateInstaBusiness();
 
@@ -122,7 +163,7 @@ namespace InstaCoreGraphAPI.UnitTests
             var result = instaBusiness.GetStoriesInsight();
 
             // Assert
-            Assert.True(false);
+            Assert.True(result.Count > 0);
         }
     }
 }

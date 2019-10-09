@@ -76,12 +76,12 @@ namespace InstaCoreGraphAPI.Business
             // invoke the private method - DoMediaSearch()
             Media instagramResults = DoMediaSearch(limit, cursorBefore, cursorAfter);
 
-            var mediaModels = ExtractSimpleMedia(instagramResults);
+            var mediaModels = ExtractSimpleMedia(instagramResults,false);
 
             return mediaModels;
         }
 
-        private List<SimpleMedia> ExtractSimpleMedia(Media instagramResults)
+        private List<SimpleMedia> ExtractSimpleMedia(Media instagramResults, bool isStory)
         {
             List<SimpleMedia> mediaModels = new List<SimpleMedia>();
 
@@ -89,7 +89,7 @@ namespace InstaCoreGraphAPI.Business
 
             foreach (MediaData mediaData in instagramResults.data)
             {
-                InstagramInsight insight = GetMediaImpressionsInsight(mediaData.id);
+                InstagramInsight insight = GetMediaImpressionsInsight(mediaData.id, isStory);
 
                 mediaModels.Add(
                     new SimpleMedia
@@ -116,32 +116,48 @@ namespace InstaCoreGraphAPI.Business
             return JsonConvert.DeserializeObject<BusinessDiscovery>(GetGraphApiUrl(businessUrl));
         }
 
-        public SimpleMedia GetMediaInsight(string id)
+        private SimpleMedia GetInsight(string id, bool isStory)
         {
             //url for one media
-            string mediaUrl = $"{_fbGraphApiBaseUrl}/{id}?access_token={_accessToken}&fields=media_url%2Cmedia_type%2Ccomments_count%2Clike_count%2Ctimestamp%2Cpermalink%2Ccaption";
+            string mediaUrl =
+                $"{_fbGraphApiBaseUrl}/{id}?access_token={_accessToken}&fields=media_url%2Cmedia_type%2Ccomments_count%2Clike_count%2Ctimestamp%2Cpermalink%2Ccaption";
             //invoke the request
             string jsonResult = this.GetGraphApiUrl(mediaUrl);
             // convert to json annotated object
             MediaData mediaData = JsonConvert.DeserializeObject<MediaData>(jsonResult);
 
-            InstagramInsight insight = GetMediaImpressionsInsight(mediaData.id);
+            InstagramInsight insight = GetMediaImpressionsInsight(mediaData.id, isStory);
 
-            return 
+            var engagementValue = insight.data.FirstOrDefault(i => i.name == "engagement");
+            var impressionsValue = insight.data.FirstOrDefault(i => i.name == "impressions");
+            var reachValue = insight.data.FirstOrDefault(i => i.name == "reach");
+
+            return
                 new SimpleMedia
                 {
                     id = mediaData.id,
                     like_count = mediaData.like_count,
                     comments_count = mediaData.comments_count,
-                    impression_count = insight.data.Find(i => i.name == "impressions").values[0].value,
-                    engagement_count = insight.data.Find(i => i.name == "engagement").values[0].value,
-                    reach_count = insight.data.Find(i => i.name == "reach").values[0].value,
+                    impression_count = impressionsValue?.values[0].value ?? -1,
+                    engagement_count = engagementValue?.values[0].value ?? -1,
+                    reach_count = reachValue?.values[0].value ?? -1,
                     media_url = mediaData.media_url,
                     permalink = mediaData.permalink,
                     //Comments = GetMediaCommentsEntities(mediaData.id),
                     timestamp = mediaData.timestamp
                 };
         }
+
+        public SimpleMedia GetMediaInsight(string id)
+        {
+            return GetInsight(id, false);
+        }
+
+        public SimpleMedia GetStoryInsight(string id)
+        {
+            return GetInsight(id, true);
+        }
+
 
         public List<SimpleMedia> GetStoriesInsight()
         {
@@ -152,15 +168,16 @@ namespace InstaCoreGraphAPI.Business
             // convert to json annotated object
             Media stories = JsonConvert.DeserializeObject<Media>(jsonResult);
 
-            var mediaDatas = ExtractSimpleMedia(stories);
+            var mediaDatas = ExtractSimpleMedia(stories,true);
 
             return mediaDatas;
         }
 
         #region Private Methods
-        private InstagramInsight GetMediaImpressionsInsight(string mediaDataId)
+        private InstagramInsight GetMediaImpressionsInsight(string mediaDataId, bool isStory)
         {
-            string impressionsUrl = $"{_fbGraphApiBaseUrl}/{mediaDataId}/insights/?metric=impressions%2Creach&access_token={_accessToken}";
+            string metric = isStory ? "impressions%2Creach%2Cexits%2Creplies%2Ctaps_forward%2Ctaps_back" : "impressions%2Creach%2Cengagement%2Csaved";
+            string impressionsUrl = $"{_fbGraphApiBaseUrl}/{mediaDataId}/insights/?metric={metric}&access_token={_accessToken}";
 
             InstagramInsight instagramInsight;
 

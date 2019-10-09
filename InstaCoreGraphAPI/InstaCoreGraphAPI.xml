@@ -4,13 +4,6 @@
         <name>InstaCoreGraphAPI</name>
     </assembly>
     <members>
-        <member name="M:InstaCoreGraphAPI.Controllers.InstaController.Get(System.String)">
-            <summary>
-            Get results from an url
-            </summary>
-            <param name="uri">an url of facebook graph api</param>
-            <returns>A json file </returns>
-        </member>
         <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetMediasInsight(System.Int32,System.String,System.String)">
             <summary>
             /// Get insight and properties for a list of medias
@@ -23,6 +16,13 @@
         <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetMediaInsight(System.String)">
             <summary>
             Get insight and properties for one specific media
+            </summary>
+            <param name="mediaId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetStoryInsight(System.String)">
+            <summary>
+            Get insight and properties for one specific story
             </summary>
             <param name="mediaId"></param>
             <returns></returns>

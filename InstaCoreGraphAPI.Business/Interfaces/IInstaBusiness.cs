@@ -16,6 +16,8 @@ namespace InstaCoreGraphAPI.Business.Interfaces
 
         SimpleMedia GetMediaInsight(string id);
 
+        SimpleMedia GetStoryInsight(string id);
+
         List<SimpleMedia> GetStoriesInsight();
 
         BusinessDiscovery GetBusinessDiscovery(string instagramId, string accountName);
