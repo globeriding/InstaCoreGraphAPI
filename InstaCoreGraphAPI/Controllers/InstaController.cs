@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 using InstaCoreGraphAPI.Graph.Entity;
+using InstaCoreGraphAPI.Graph.Entity.Request;
 
 namespace InstaCoreGraphAPI.Controllers
 {
@@ -34,19 +35,32 @@ namespace InstaCoreGraphAPI.Controllers
         }
 
         /// <summary>
-        /// /// Get insight and properties for a list of medias
+        /// Get insight and properties for a list of medias
         /// </summary>
-        /// <param name="limit">number of medias to display</param>
-        /// <param name="cursorAfter">cursor for the next list of medias </param>
-        /// <param name="cursorBefore">cursor for the previous list of medias </param>
+        /// <param name="reqEntity">Request object parameters</param>
         /// <returns>A json file </returns>
-        [HttpGet("GetMediasInsight")]
+        /// <remarks>
+        /// Sample request: 
+        ///     POST api/v1/Insta/GetMediasInsight
+        ///     {
+        ///        "limit": 25,
+        ///        "cursorBefore": "123456",
+        ///        "cursorAfter": "123456"
+        ///     }
+        /// OR
+        ///     POST api/v1/Insta/GetMediasInsight
+        ///     {
+        ///        "limit": 1
+        ///     }
+        /// 
+        /// </remarks>
+        [HttpPost("GetMediasInsight")]
         [SwaggerResponse((int)HttpStatusCode.OK, "Success.")]
         [SwaggerResponse((int)HttpStatusCode.InternalServerError, "Internal Server error.")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, "Bad request", typeof(string))]
-        public IActionResult GetMediasInsight(int limit = 25, string cursorBefore = null, string cursorAfter = null)
+        public IActionResult GetMediasInsight(MediasRequestEntity reqEntity)
         {
-            List<SimpleMedia> objectResult = _instaBusiness.GetMediasInsight(limit, cursorBefore, cursorAfter);
+            List<SimpleMedia> objectResult = _instaBusiness.GetMediasInsight(reqEntity.limit, reqEntity.cursorBefore, reqEntity.cursorAfter);
             return Ok(objectResult);
         }
 

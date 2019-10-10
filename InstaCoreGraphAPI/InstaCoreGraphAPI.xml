@@ -4,14 +4,27 @@
         <name>InstaCoreGraphAPI</name>
     </assembly>
     <members>
-        <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetMediasInsight(System.Int32,System.String,System.String)">
+        <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetMediasInsight(InstaCoreGraphAPI.Graph.Entity.Request.MediasRequestEntity)">
             <summary>
-            /// Get insight and properties for a list of medias
+            Get insight and properties for a list of medias
             </summary>
-            <param name="limit">number of medias to display</param>
-            <param name="cursorAfter">cursor for the next list of medias </param>
-            <param name="cursorBefore">cursor for the previous list of medias </param>
+            <param name="reqEntity">Request object parameters</param>
             <returns>A json file </returns>
+            <remarks>
+            Sample request: 
+                POST api/v1/Insta/GetMediasInsight
+                {
+                   "limit": 25,
+                   "cursorBefore": "123456",
+                   "cursorAfter": "123456"
+                }
+            OR
+                POST api/v1/Insta/GetMediasInsight
+                {
+                   "limit": 1
+                }
+            
+            </remarks>
         </member>
         <member name="M:InstaCoreGraphAPI.Controllers.InstaController.GetMediaInsight(System.String)">
             <summary>

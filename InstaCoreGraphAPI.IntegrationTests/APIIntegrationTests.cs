@@ -21,10 +21,17 @@ namespace InstaCoreGraphAPI.IntegrationTests
         public async Task TestGetMediasInsightAsync()
         {
             // Arrange
-            string baseUri = "/api/v1/Insta/GetMediasInsight?limit=2";
+            var request = new
+            {
+                Url = "/api/v1/Insta/GetMediasInsight",
+                Body = new
+                {
+                    limit = 1
+                }
+            };
 
             // Act
-            var response = await Client.GetAsync(baseUri);
+            var response = await Client.PostAsync(request.Url, ContentHelper.GetStringContent(request.Body));
 
             // Assert
             response.EnsureSuccessStatusCode();
